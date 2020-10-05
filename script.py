@@ -73,28 +73,52 @@ def buscar_libre(tps):
 def get_IA():
     R1 = float('{:.2f}'.format(random.random()))  # only two decimals of random
     if mode == 'PRE_PANDEMIA':
-        return 4.6985 * (((1 / ((1 - R1) ** 1.06019)) - 1) ** 0.31406039136726861)
+        try:
+            r = 4.6985 * (((1 / ((1 - R1) ** 1.06019)) - 1) ** 0.31406039136726861)
+            return r
+        except ZeroDivisionError:
+            return 0.99
 
     else:  # POST_PANDEMIA
-        return 318.58 * (((1 / ((1 - R1) ** 0.0034559)) - 1) ** 0.4614887627486271)
+        try:
+            r = 318.58 * (((1 / ((1 - R1) ** 0.0034559)) - 1) ** 0.4614887627486271)
+            return r
+        except ZeroDivisionError:
+            return 0.99
 
 
 def get_TAE():
     R1 = float('{:.2f}'.format(random.random()))  # only two decimals of random
     if mode == 'PRE_PANDEMIA':
-        return 45.789 * (((1 / ((1 - R1) ** 0.0488377)) - 1) ** 0.3133028385237170)
+        try:
+            r = 45.789 * (((1 / ((1 - R1) ** 0.0488377)) - 1) ** 0.3133028385237170)
+            return r
+        except ZeroDivisionError:
+            return 0.99
 
     else:  # POST_PANDEMIA
-        return 129.61 * (((1 / ((1 - R1) ** 0.00279955)) - 1) ** 0.3482379161443098)
+        try:
+            r = 129.61 * (((1 / ((1 - R1) ** 0.00279955)) - 1) ** 0.3482379161443098)
+            return r
+        except ZeroDivisionError:
+            return 0.99
 
 
 def get_TAJ():
     R1 = float('{:.2f}'.format(random.random()))  # only two decimals of random
     if mode == 'PRE_PANDEMIA':
-        return 23.229 * (((1 / ((1 - R1) ** 0.32924)) - 1) ** 0.3109549426288131)
+        try:
+            r = 23.229 * (((1 / ((1 - R1) ** 0.32924)) - 1) ** 0.3109549426288131)
+            return r
+        except ZeroDivisionError:
+            return 0.99
 
     else:  # POST_PANDEMIA
-        return 13.618 * (((1 / ((1 - R1) ** 0.991375)) - 1) ** 0.2445466105839773)
+        try:
+            r = 13.618 * (((1 / ((1 - R1) ** 0.991375)) - 1) ** 0.2445466105839773)
+            return r
+        except ZeroDivisionError:
+            return 0.99
 
 
 def llegada():
