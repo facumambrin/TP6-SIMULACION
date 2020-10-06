@@ -28,9 +28,12 @@ STOJ = [0 for i in range(J)]
 ITOE = [0 for i in range(E)]
 ITOJ = [0 for i in range(J)]
 
-
 # modes: PRE_PANDEMIA, POST_PANDEMIA
 mode = 'PRE_PANDEMIA'
+
+#pruebas
+NTI = 0
+NTC = 0
 
 
 # funciones accesorias
@@ -40,7 +43,7 @@ def inicializar_variables(m):
     global mode, TF, PORCENTAJE_OCURRENCIA_CABOJATE
     mode = m
     if m == 'PRE_PANDEMIA':
-        TF = 2000000
+        TF = 4000
         PORCENTAJE_OCURRENCIA_CABOJATE = 0.45
 
     else:
@@ -63,66 +66,101 @@ def buscar_libre(tps):
     return libres[0] if len(libres) else 0  # el primero que este libre, si no el primero
 
 
+# def get_IA():
+#     R1 = float('{:.2f}'.format(random.random()))  # only two decimals of random
+#     if mode == 'PRE_PANDEMIA':
+#         try:
+#             # r = 4.6985 * (((1 / ((1 - R1) ** 1.06019)) - 1) ** 0.3146039136726861) antes
+#             r = 6.9268 * (((1 / ((1 - R1) ** 0.468033)) - 1) ** 0.3658848926127840)
+#             return r
+#         except ZeroDivisionError:
+#             return 0.99
+#
+#     else:  # POST_PANDEMIA
+#         try:
+#             r = 318.58 * (((1 / ((1 - R1) ** 0.0034559)) - 1) ** 0.4614887627486271)
+#             return r
+#         except ZeroDivisionError:
+#             return 0.99
+#
+#
+# def get_TAE():
+#     R1 = float('{:.2f}'.format(random.random()))  # only two decimals of random
+#     if mode == 'PRE_PANDEMIA':
+#         try:
+#             r = 45.789 * (((1 / ((1 - R1) ** 0.0488377)) - 1) ** 0.3133028385237170)
+#             return r
+#         except ZeroDivisionError:
+#             return 0.99
+#
+#     else:  # POST_PANDEMIA
+#         try:
+#             r = 129.61 * (((1 / ((1 - R1) ** 0.00279955)) - 1) ** 0.3482379161443098)
+#             return r
+#         except ZeroDivisionError:
+#             return 0.99
+#
+#
+# def get_TAJ():
+#     R1 = float('{:.2f}'.format(random.random()))  # only two decimals of random
+#     if mode == 'PRE_PANDEMIA':
+#         try:
+#             r = 23.229 * (((1 / ((1 - R1) ** 0.32924)) - 1) ** 0.3109549426288131)
+#             return r
+#         except ZeroDivisionError:
+#             return 0.99
+#
+#     else:  # POST_PANDEMIA
+#         try:
+#             r = 13.618 * (((1 / ((1 - R1) ** 0.991375)) - 1) ** 0.2445466105839773)
+#             return r
+#         except ZeroDivisionError:
+#             return 0.99
+
 def get_IA():
     R1 = float('{:.2f}'.format(random.random()))  # only two decimals of random
-    if mode == 'PRE_PANDEMIA':
-        try:
-            r = 4.6985 * (((1 / ((1 - R1) ** 1.06019)) - 1) ** 0.3146039136726861)
-            return r
-        except ZeroDivisionError:
-            return 0.99
-
-    else:  # POST_PANDEMIA
-        try:
-            r = 318.58 * (((1 / ((1 - R1) ** 0.0034559)) - 1) ** 0.4614887627486271)
-            return r
-        except ZeroDivisionError:
-            return 0.99
+    if R1 == 1.0:
+        return 0.99
+    else:
+        if mode == 'PRE_PANDEMIA':
+            return 6.9268 * (((1 / ((1 - R1) ** 0.468033)) - 1) ** 0.3658848926127840)
+        else:
+            return 318.58 * (((1 / ((1 - R1) ** 0.0034559)) - 1) ** 0.4614887627486271)
 
 
 def get_TAE():
     R1 = float('{:.2f}'.format(random.random()))  # only two decimals of random
-    if mode == 'PRE_PANDEMIA':
-        try:
-            r = 45.789 * (((1 / ((1 - R1) ** 0.0488377)) - 1) ** 0.3133028385237170)
-            return r
-        except ZeroDivisionError:
-            return 0.99
-
-    else:  # POST_PANDEMIA
-        try:
-            r = 129.61 * (((1 / ((1 - R1) ** 0.00279955)) - 1) ** 0.3482379161443098)
-            return r
-        except ZeroDivisionError:
-            return 0.99
+    if R1 == 1.0:
+        return 0.99
+    else:
+        if mode == 'PRE_PANDEMIA':
+            return 45.789 * (((1 / ((1 - R1) ** 0.0488377)) - 1) ** 0.3133028385237170)
+        else:
+            return 13.618 * (((1 / ((1 - R1) ** 0.991375)) - 1) ** 0.2445466105839773)
 
 
 def get_TAJ():
     R1 = float('{:.2f}'.format(random.random()))  # only two decimals of random
-    if mode == 'PRE_PANDEMIA':
-        try:
-            r = 23.229 * (((1 / ((1 - R1) ** 0.32924)) - 1) ** 0.3109549426288131)
-            return r
-        except ZeroDivisionError:
-            return 0.99
-
-    else:  # POST_PANDEMIA
-        try:
-            r = 13.618 * (((1 / ((1 - R1) ** 0.991375)) - 1) ** 0.2445466105839773)
-            return r
-        except ZeroDivisionError:
-            return 0.99
+    if R1 == 1.0:
+        return 0.99
+    else:
+        if mode == 'PRE_PANDEMIA':
+            return 23.229 * (((1 / ((1 - R1) ** 0.32924)) - 1) ** 0.3109549426288131)
+        else:
+            return 318.58 * (((1 / ((1 - R1) ** 0.0034559)) - 1) ** 0.4614887627486271)
 
 
 def llegada():
-    global T, E, TPLL, NSI, NSC, STOE, STOJ
+    global T, TPLL, NSI, NSC, STOE, STOJ, NTI, NTC, TPSJ, TPSE
     T = TPLL
+    # print(f'T: {T}')
     IA = get_IA()
     TPLL = TPLL + IA
     r = random.random()
     if r <= PORCENTAJE_OCURRENCIA_CABOJATE:
         # cabotaje
         NSC += 1
+        NTC += 1
         if NSC <= E:
             # atiende empleado
             jj = buscar_libre(TPSE)
@@ -140,6 +178,7 @@ def llegada():
     else:
         # internacional
         NSI += 1
+        NTI += 1
         if NSI <= J:
             ii = buscar_libre(TPSJ)
             STOJ[ii] += T - ITOJ[ii]
@@ -149,7 +188,7 @@ def llegada():
 
 
 def salida_jefe(ind):
-    global T, E, TPLL, NSI, NSC, STOE, STOJ
+    global T, NSI, NSC, ITOJ, TPSJ
     T = TPSJ[ind]
     if atencion_jefes[ind] == 'C':
         # atendió un cabotaje anteriormente
@@ -172,9 +211,9 @@ def salida_jefe(ind):
 
 
 def salida_empleado(ind):
-    global T, E, TPLL, NSI, NSC, STOE, STOJ
+    global T, NSC, ITOE, TPSE
     T = TPSE[ind]
-    NSC -= NSC
+    NSC -= 1
     if NSC >= E:
         TAE = get_TAE()
         TPSE[ind] = T + TAE
@@ -198,6 +237,8 @@ def mostrar_resultados():
 def prueba():
     print(f'NSC: {NSC}')
     print(f'NSI: {NSI}')
+    print(f'NTI: {NTI}')
+    print(f'NTC: {NTC}')
 
 
 def simulacion(m):
@@ -207,13 +248,24 @@ def simulacion(m):
         i = buscar_menor_TPS(TPSJ)
         j = buscar_menor_TPS(TPSE)
 
-        if TPLL <= TPSJ[i] and TPLL <= TPSE[j]:  # todo: check OR instead of AND
-            llegada()
-        else:
-            if TPSJ[i] <= TPSE[j]:
+        if TPSJ[i] <= TPSE[j]:
+            if TPSJ[i] <= TPLL:
                 salida_jefe(i)
             else:
+                llegada()
+        else:
+            if TPSE[j] <= TPLL:
                 salida_empleado(j)
+            else:
+                llegada()
+
+        # if TPLL <= TPSJ[i] and TPLL <= TPSE[j]:  # todo: check OR instead of AND
+        #     llegada()
+        # else:
+        #     if TPSJ[i] <= TPSE[j]:
+        #         salida_jefe(i)
+        #     else:
+        #         salida_empleado(j)
 
     print('finaliza simulacion...')
     mostrar_resultados()
