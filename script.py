@@ -4,10 +4,10 @@ import random
 
 HV = 99999999999999999  # todo:check
 T = 0
-TF = 1000  # todo: check
+TF = 0  # todo: check
 
 # variables de control
-J = 1
+J = 2
 E = 3
 
 ############################
@@ -15,8 +15,8 @@ E = 3
 atencion_jefes = ['A' for i in range(J)]
 
 TPLL = 0
-TPSJ = [0 for i in range(J)]
-TPSE = [0 for i in range(E)]
+TPSJ = [HV for i in range(J)]
+TPSE = [HV for i in range(E)]
 
 NSC = 0
 NSI = 0
@@ -52,10 +52,11 @@ def inicializar_variables(m):
     global mode, TF
     mode = m
     if m == 'PRE_PANDEMIA':
-        TF = 2000
+        TF = 100000
 
     else:
-        TF = 1000
+        TF = 100000
+
 
 def buscar_menor_TPS(tps):
     v_min = HV
@@ -76,7 +77,7 @@ def get_IA():
     R1 = float('{:.2f}'.format(random.random()))  # only two decimals of random
     if mode == 'PRE_PANDEMIA':
         try:
-            r = 4.6985 * (((1 / ((1 - R1) ** 1.06019)) - 1) ** 0.31406039136726861)
+            r = 4.6985 * (((1 / ((1 - R1) ** 1.06019)) - 1) ** 0.3146039136726861)
             return r
         except ZeroDivisionError:
             return 0.99
@@ -174,7 +175,7 @@ def salida_jefe(ind):
     else:
         NSI -= 1
         STSI += T
-    if NSC >= J:
+    if NSI >= J:
         # hay internacional para atender
         TAJ = get_TAJ()
         TPSJ[ind] = T + TAJ
@@ -218,10 +219,15 @@ def mostrar_resultados():
         print('------------')
 
     print('CLIENTES CABOTAJE----------------------------')
-    print(f'PROMEDIO TIEMPO DE ESPERA DE COMPRADORES CABOTAJE: {(STSC - STLLC)/NTC}')
+    print(f'PROMEDIO TIEMPO DE ESPERA DE COMPRADORES CABOTAJE: {(STSC - STLLC) / NTC}')
 
     print('CLIENTES INTERNACIONAL-----------------------')
-    print(f'PROMEDIO TIEMPO DE ESPERA DE COMPRADORES INTERNACIONAL: {(STSI - STLLI)/NTI}')
+    print(f'PROMEDIO TIEMPO DE ESPERA DE COMPRADORES INTERNACIONAL: {(STSI - STLLI) / NTI}')
+
+
+def prueba():
+    print(f'NSC: {NSC}')
+    print(f'NSI: {NSI}')
 
 
 def simulacion(m):
@@ -231,7 +237,7 @@ def simulacion(m):
         i = buscar_menor_TPS(TPSJ)
         j = buscar_menor_TPS(TPSE)
 
-        if TPLL <= TPSJ[i] and TPLL <= TPSE[j]:
+        if TPLL <= TPSJ[i] and TPLL <= TPSE[j]:  # todo: check OR instead of AND
             llegada()
         else:
             if TPSJ[i] <= TPSE[j]:
@@ -241,8 +247,9 @@ def simulacion(m):
 
     print('finaliza simulacion...')
     mostrar_resultados()
+    prueba()
 
 
 # comienzo simulacion
 simulacion('PRE_PANDEMIA')
-# simulacion('POST_PANDEMIA')
+#simulacion('POST_PANDEMIA')
