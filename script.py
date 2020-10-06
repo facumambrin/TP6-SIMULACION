@@ -21,10 +21,13 @@ TPSE = [0 for i in range(E)]
 NSC = 0
 NSI = 0
 NT = 0
+NTI = 0  # total de compradores internacionales que entraron al sistema
+NTC = 0  # total de compradores de cabotaje que entraron al sistema
 
-STLL = 0
-STSE = [0 for i in range(E)]
-STSJ = [0 for i in range(J)]
+STLLI = 0
+STLLC = 0
+STSC = 0
+STSI = 0
 STOE = [0 for i in range(E)]
 STOJ = [0 for i in range(J)]
 STAE = [0 for i in range(E)]
@@ -46,14 +49,13 @@ mode = 'PRE_PANDEMIA'
 
 # todo:check diferencias entre pre y post
 def inicializar_variables(m):
-    global mode, T
+    global mode, TF
     mode = m
     if m == 'PRE_PANDEMIA':
-        T = 300
+        TF = 2000
 
     else:
-        T = 200
-
+        TF = 1000
 
 def buscar_menor_TPS(tps):
     v_min = HV
@@ -122,16 +124,17 @@ def get_TAJ():
 
 
 def llegada():
-    global T, E, TPLL, NT, NSI, STLL, NSC, STOE, STOJ
+    global T, E, TPLL, NT, NSI, STLL, NSC, STOE, STOJ, STLLC, STLLI, NTI, NTC
     T = TPLL
     IA = get_IA()
     TPLL = TPLL + IA
     NT += 1
-    STLL += T
     r = random.random()
     if r <= 0.45:
         # cabotaje
         NSC += 1
+        NTC += 1
+        STLLC += T
         if NSC <= E:
             # atiende empleado
             jj = buscar_libre(TPSE)
@@ -151,6 +154,8 @@ def llegada():
     else:
         # internacional
         NSI += 1
+        NTI += 1
+        STLLI += T
         if NSI <= J:
             ii = buscar_libre(TPSJ)
             STOJ[ii] += T - ITOJ[ii]
@@ -160,14 +165,15 @@ def llegada():
 
 
 def salida_jefe(ind):
-    global T, E, TPLL, NT, NSI, STLL, NSC, STOE, STOJ
+    global T, E, TPLL, NT, NSI, STLL, NSC, STOE, STOJ, STSC, STSI
     T = TPSJ[ind]
-    STSJ[ind] += T
     if atencion_jefes[ind] == 'C':
         # atendió un cabotaje anteriormente
         NSC -= 1
+        STSC += T
     else:
         NSI -= 1
+        STSI += T
     if NSC >= J:
         # hay internacional para atender
         TAJ = get_TAJ()
@@ -186,9 +192,9 @@ def salida_jefe(ind):
 
 
 def salida_empleado(ind):
-    global T, E, TPLL, NT, NSI, STLL, NSC, STOE, STOJ
+    global T, E, TPLL, NT, NSI, STLL, NSC, STOE, STOJ, STSC
     T = TPSE[ind]
-    STSE[ind] += T
+    STSC += T
     NSC -= NSC
     if NSC >= E:
         TAE = get_TAE()
@@ -199,8 +205,28 @@ def salida_empleado(ind):
         TPSE[ind] = HV
 
 
+def mostrar_resultados():
+    print('MOSTRANDO RESULTADOS')
+
+    print('JEFES----------------------------------------')
+    for i in range(J):
+        print(f'PORCENTAJE TIEMPO OCIOSO DEL JEFE {i}: {(STOJ[i] / T) * 100}')
+
+    print('EMPLEADOS------------------------------------')
+    for i in range(E):
+        print(f'PORCENTAJE TIEMPO OCIOSO DEL EMPLEADO {i}: {(STOE[i] / T) * 100}')
+        print('------------')
+
+    print('CLIENTES CABOTAJE----------------------------')
+    print(f'PROMEDIO TIEMPO DE ESPERA DE COMPRADORES CABOTAJE: {(STSC - STLLC)/NTC}')
+
+    print('CLIENTES INTERNACIONAL-----------------------')
+    print(f'PROMEDIO TIEMPO DE ESPERA DE COMPRADORES INTERNACIONAL: {(STSI - STLLI)/NTI}')
+
+
 def simulacion(m):
     inicializar_variables(m)
+    print(f'Comienza simulacion...modo:{m}')
     while T <= TF:
         i = buscar_menor_TPS(TPSJ)
         j = buscar_menor_TPS(TPSE)
@@ -212,6 +238,9 @@ def simulacion(m):
                 salida_jefe(i)
             else:
                 salida_empleado(j)
+
+    print('finaliza simulacion...')
+    mostrar_resultados()
 
 
 # comienzo simulacion
