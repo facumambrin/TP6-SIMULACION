@@ -10,6 +10,8 @@ TF = 0  # todo: check
 J = 2
 E = 3
 
+PORCENTAJE_OCURRENCIA_CABOJATE = 0
+
 ############################
 # 'I': atendió un internacional. 'C': atendió un cabotaje
 atencion_jefes = ['A' for i in range(J)]
@@ -20,18 +22,9 @@ TPSE = [HV for i in range(E)]
 
 NSC = 0
 NSI = 0
-NT = 0
-NTI = 0  # total de compradores internacionales que entraron al sistema
-NTC = 0  # total de compradores de cabotaje que entraron al sistema
 
-STLLI = 0
-STLLC = 0
-STSC = 0
-STSI = 0
 STOE = [0 for i in range(E)]
 STOJ = [0 for i in range(J)]
-STAE = [0 for i in range(E)]
-STAJ = [0 for i in range(E)]
 ITOE = [0 for i in range(E)]
 ITOJ = [0 for i in range(J)]
 
@@ -44,20 +37,22 @@ mode = 'PRE_PANDEMIA'
 
 # todo:check diferencias entre pre y post
 def inicializar_variables(m):
-    global mode, TF
+    global mode, TF, PORCENTAJE_OCURRENCIA_CABOJATE
     mode = m
     if m == 'PRE_PANDEMIA':
-        TF = 100000
+        TF = 2000000
+        PORCENTAJE_OCURRENCIA_CABOJATE = 0.45
 
     else:
-        TF = 100000
+        TF = 5000000
+        PORCENTAJE_OCURRENCIA_CABOJATE = 0.20
 
 
 def buscar_menor_TPS(tps):
     v_min = HV
     indice = 0
     for i, v in enumerate(tps):
-        if v < v_min:
+        if v <= v_min:
             v_min = v
             indice = i
     return indice
@@ -120,24 +115,20 @@ def get_TAJ():
 
 
 def llegada():
-    global T, E, TPLL, NT, NSI, STLL, NSC, STOE, STOJ, STLLC, STLLI, NTI, NTC
+    global T, E, TPLL, NSI, NSC, STOE, STOJ
     T = TPLL
     IA = get_IA()
     TPLL = TPLL + IA
-    NT += 1
     r = random.random()
-    if r <= 0.45:
+    if r <= PORCENTAJE_OCURRENCIA_CABOJATE:
         # cabotaje
         NSC += 1
-        NTC += 1
-        STLLC += T
         if NSC <= E:
             # atiende empleado
             jj = buscar_libre(TPSE)
             STOE[jj] += T - ITOE[jj]
             TAE = get_TAE()
             TPSE[jj] = T + TAE
-            STAE[jj] = STAE[jj] + TAE
         else:
             ii = buscar_libre(TPSJ)
             if TPSJ[ii] == HV:
@@ -145,13 +136,10 @@ def llegada():
                 STOJ[ii] += T - ITOJ[ii]
                 TAJ = get_TAJ()
                 TPSJ[ii] = T + TAJ
-                STAJ[ii] += TAJ
                 atencion_jefes[ii] = 'C'
     else:
         # internacional
         NSI += 1
-        NTI += 1
-        STLLI += T
         if NSI <= J:
             ii = buscar_libre(TPSJ)
             STOJ[ii] += T - ITOJ[ii]
@@ -161,26 +149,22 @@ def llegada():
 
 
 def salida_jefe(ind):
-    global T, E, TPLL, NT, NSI, STLL, NSC, STOE, STOJ, STSC, STSI
+    global T, E, TPLL, NSI, NSC, STOE, STOJ
     T = TPSJ[ind]
     if atencion_jefes[ind] == 'C':
         # atendió un cabotaje anteriormente
         NSC -= 1
-        STSC += T
     else:
         NSI -= 1
-        STSI += T
     if NSI >= J:
         # hay internacional para atender
         TAJ = get_TAJ()
         TPSJ[ind] = T + TAJ
-        STAJ[ind] += TAJ
     else:
         if NSC >= E:
             # atiende cabotaje
             TAJ = get_TAJ()
             TPSJ[ind] = T + TAJ
-            STAJ[ind] += TAJ
         else:
             # tampoco hay de cabotaje para atender
             ITOJ[ind] = T
@@ -188,14 +172,12 @@ def salida_jefe(ind):
 
 
 def salida_empleado(ind):
-    global T, E, TPLL, NT, NSI, STLL, NSC, STOE, STOJ, STSC
+    global T, E, TPLL, NSI, NSC, STOE, STOJ
     T = TPSE[ind]
-    STSC += T
     NSC -= NSC
     if NSC >= E:
         TAE = get_TAE()
         TPSE[ind] = T + TAE
-        STAE[ind] += TAE
     else:
         ITOE[ind] = T
         TPSE[ind] = HV
@@ -211,13 +193,6 @@ def mostrar_resultados():
     print('EMPLEADOS------------------------------------')
     for i in range(E):
         print(f'PORCENTAJE TIEMPO OCIOSO DEL EMPLEADO {i}: {(STOE[i] / T) * 100}')
-        print('------------')
-
-    print('CLIENTES CABOTAJE----------------------------')
-    print(f'PROMEDIO TIEMPO DE ESPERA DE COMPRADORES CABOTAJE: {(STSC - STLLC) / NTC}')
-
-    print('CLIENTES INTERNACIONAL-----------------------')
-    print(f'PROMEDIO TIEMPO DE ESPERA DE COMPRADORES INTERNACIONAL: {(STSI - STLLI) / NTI}')
 
 
 def prueba():
