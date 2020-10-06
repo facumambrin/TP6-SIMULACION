@@ -35,13 +35,8 @@ STAJ = [0 for i in range(E)]
 ITOE = [0 for i in range(E)]
 ITOJ = [0 for i in range(J)]
 
-modes = {
-    'PRE_PANDEMIA': 0,
-    'POST_PANDEMIA': 1
-}
 
 # modes: PRE_PANDEMIA, POST_PANDEMIA
-
 mode = 'PRE_PANDEMIA'
 
 
