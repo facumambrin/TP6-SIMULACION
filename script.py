@@ -7,22 +7,23 @@ T = 0
 TF = 0  # todo: check
 
 # variables de control
-J = 2
-E = 3
+J = 1
+E = 1
 
 PORCENTAJE_OCURRENCIA_CABOJATE = 0
 
 ############################
-# 'I': atendió un internacional. 'C': atendió un cabotaje
-atencion_jefes = ['A' for i in range(J)]
 
 TPLL = 0
 TPSJ = [HV for i in range(J)]
 TPSE = [HV for i in range(E)]
 
+# estado
 NSC = 0
 NSI = 0
+UAJ = ['-' for i in range(J)]  # indica si lo ultimo que atendió el jefe i es CABOTAJE o INTERNACIONAL
 
+# para calculo de resultados
 STOE = [0 for i in range(E)]
 STOJ = [0 for i in range(J)]
 ITOE = [0 for i in range(E)]
@@ -31,9 +32,10 @@ ITOJ = [0 for i in range(J)]
 # modes: PRE_PANDEMIA, POST_PANDEMIA
 mode = 'PRE_PANDEMIA'
 
-#pruebas
+# pruebas
 NTI = 0
 NTC = 0
+
 
 # funciones accesorias
 
@@ -173,7 +175,7 @@ def llegada():
                 STOJ[ii] += T - ITOJ[ii]
                 TAJ = get_TAJ()
                 TPSJ[ii] = T + TAJ
-                atencion_jefes[ii] = 'C'
+                UAJ[ii] = 'C'
     else:
         # internacional
         NSI += 1
@@ -183,13 +185,13 @@ def llegada():
             STOJ[ii] += T - ITOJ[ii]
             TAJ = get_TAJ()
             TPSJ[ii] = T + TAJ
-            atencion_jefes[ii] = 'I'
+            UAJ[ii] = 'I'
 
 
 def salida_jefe(ind):
-    global T, NSI, NSC, ITOJ, TPSJ, atencion_jefes
+    global T, NSI, NSC, ITOJ, TPSJ, UAJ
     T = TPSJ[ind]
-    if atencion_jefes[ind] == 'C':
+    if UAJ[ind] == 'C':
         # atendió un cabotaje anteriormente
         NSC -= 1
     else:
@@ -199,13 +201,13 @@ def salida_jefe(ind):
         # hay internacional para atender
         TAJ = get_TAJ()
         TPSJ[ind] = T + TAJ
-        atencion_jefes[ind] = 'I'
+        UAJ[ind] = 'I'
     else:
         if NSC >= E:
             # atiende cabotaje
             TAJ = get_TAJ()
             TPSJ[ind] = T + TAJ
-            atencion_jefes[ind] = 'C'
+            UAJ[ind] = 'C'
         else:
             # tampoco hay de cabotaje para atender
             ITOJ[ind] = T
@@ -261,19 +263,11 @@ def simulacion(m):
             else:
                 llegada()
 
-        # if TPLL <= TPSJ[i] and TPLL <= TPSE[j]:  # todo: check OR instead of AND
-        #     llegada()
-        # else:
-        #     if TPSJ[i] <= TPSE[j]:
-        #         salida_jefe(i)
-        #     else:
-        #         salida_empleado(j)
-
     print('finaliza simulacion...')
     mostrar_resultados()
     prueba()
 
 
 # comienzo simulacion
-simulacion('PRE_PANDEMIA')
-#simulacion('POST_PANDEMIA')
+# simulacion('PRE_PANDEMIA')
+simulacion('POST_PANDEMIA')
