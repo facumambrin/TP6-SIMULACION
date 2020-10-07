@@ -35,7 +35,6 @@ mode = 'PRE_PANDEMIA'
 NTI = 0
 NTC = 0
 
-
 # funciones accesorias
 
 # todo:check diferencias entre pre y post
@@ -43,7 +42,7 @@ def inicializar_variables(m):
     global mode, TF, PORCENTAJE_OCURRENCIA_CABOJATE
     mode = m
     if m == 'PRE_PANDEMIA':
-        TF = 4000
+        TF = 4000000
         PORCENTAJE_OCURRENCIA_CABOJATE = 0.45
 
     else:
@@ -179,8 +178,8 @@ def llegada():
         # internacional
         NSI += 1
         NTI += 1
-        if NSI <= J:
-            ii = buscar_libre(TPSJ)
+        ii = buscar_libre(TPSJ)
+        if NSI <= J and TPSJ[ii] == HV:
             STOJ[ii] += T - ITOJ[ii]
             TAJ = get_TAJ()
             TPSJ[ii] = T + TAJ
@@ -188,22 +187,25 @@ def llegada():
 
 
 def salida_jefe(ind):
-    global T, NSI, NSC, ITOJ, TPSJ
+    global T, NSI, NSC, ITOJ, TPSJ, atencion_jefes
     T = TPSJ[ind]
     if atencion_jefes[ind] == 'C':
         # atendió un cabotaje anteriormente
         NSC -= 1
     else:
         NSI -= 1
+
     if NSI >= J:
         # hay internacional para atender
         TAJ = get_TAJ()
         TPSJ[ind] = T + TAJ
+        atencion_jefes[ind] = 'I'
     else:
         if NSC >= E:
             # atiende cabotaje
             TAJ = get_TAJ()
             TPSJ[ind] = T + TAJ
+            atencion_jefes[ind] = 'C'
         else:
             # tampoco hay de cabotaje para atender
             ITOJ[ind] = T
